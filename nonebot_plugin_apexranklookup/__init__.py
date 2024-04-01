@@ -17,12 +17,12 @@ global_config = get_driver().config
 config = Config.parse_obj(global_config)
 
 worker = MatcherGroup(type="message", block=True, priority=10)
-rank = worker.on_command(".stat", aliases={".查询"})
-maps = worker.on_command(".map", aliases={".地图"})
-predator = worker.on_command(".猎杀", aliases={".pd"})
-store = worker.on_command(".复制器", aliases={".crafting"})
-bind = worker.on_command(".绑定", aliases={".bind"})
-unbind = worker.on_command(".解绑", aliases={".unbind"})
+rank = worker.on_command("stat", aliases={"查询"})
+maps = worker.on_command("map", aliases={"地图"})
+predator = worker.on_command("猎杀", aliases={"pd"})
+store = worker.on_command("复制器", aliases={"crafting"})
+bind = worker.on_command("绑定", aliases={"bind"})
+unbind = worker.on_command("解绑", aliases={"unbind"})
 
 apexApi = apexApi(config.apex_api_token)
 dirname, filename = os.path.split(os.path.abspath(__file__))
@@ -41,9 +41,11 @@ async def load_userinfo():
 async def query_rank(event: Event, state: T_State):
     if isinstance(event, MessageEvent):
         try:
-            raw = event.get_plaintext().lstrip(".stat").lstrip(".查询").strip().split(" ")
+            logger.info(f"User input: {event.get_plaintext()}")
+            raw = event.get_plaintext().lstrip("/stat").lstrip("/查询").strip().split(" ")
+            print(event.get_plaintext())
             if (not raw or raw == ['']) and not user_info.get(event.get_user_id()):
-                await rank.send("请输入.查询/.stat origin_id 平台代码(xbox、ps、pc默认pc) 以空格隔开。")
+                await rank.send("请输入查询/stat origin_id 平台代码(xbox、ps、pc默认pc) 以空格隔开。")
                 return
             elif (not raw or raw == ['']) and  user_info.get(event.get_user_id()):
                 raw = user_info.get(event.get_user_id())
@@ -51,7 +53,7 @@ async def query_rank(event: Event, state: T_State):
                 origin_id, platform = raw
             else:
                 origin_id = raw[0]
-                platform = "PC"
+                platform = "pc"
             await rank.send("正在查询，请稍等。")
             msg = apexApi.player_query(origin_id, platform)
             await rank.finish(Message(msg))
@@ -112,12 +114,12 @@ async def query_store(event: Event, state: T_State):
 async def bind_user(event: Event, state: T_State):
     if isinstance(event, MessageEvent):
         try:
-            raw = event.get_plaintext().lstrip(".bind").lstrip(".绑定").strip().split(" ")
+            raw = event.get_plaintext().lstrip("/bind").lstrip("/绑定").strip().split(" ")
             if user_info.get(event.get_user_id()):
                 await bind.send(f"您已经绑定过了")
                 return
             elif not raw or raw == ['']:
-                await bind.send("请输入.bind/.绑定 origin_id 平台代码(xbox、ps、pc默认pc) 以空格隔开。")
+                await bind.send("请输入bind/.绑定 origin_id 平台代码(xbox、ps、pc默认pc) 以空格隔开。")
                 return
             if len(raw) > 1:
                 origin_id, platform = raw
