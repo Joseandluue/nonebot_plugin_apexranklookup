@@ -54,9 +54,9 @@ def draw_profile(data):
     result.paste(img_rank, box=(0, 0), mask=img_rank)
     draw.text(xy=(40, 150), text=str(data.get("global").get("rank").get("rankScore")) + "pt", fill='white', font=profile_font)
     level_text = f'id： {data.get("global").get("name")}\n等级：{data.get("global").get("level")}\n{data.get("realtime").get("currentStateAsText")}'
-    draw.text(xy=(result.size[0]-draw.textsize(level_text, profile_font)[0], 0), text=level_text, fill='white', font=profile_font)
-    badges_text = "\n".join([f'{i.get("name")}:{i.get("value")}' for i in data.get("legends").get("selected").get("gameInfo").get("badges")])
-    draw.text(xy=(result.size[0]-draw.textsize(badges_text, profile_font)[0], result.size[1]-draw.textsize(badges_text, profile_font)[1]), text="追踪器:\n" + ("无" if not badges_text else badges_text), fill='white', font=profile_font)
+    draw.text(xy=(result.size[0]-draw.textbbox((0, 0), level_text, profile_font)[0]-150, 0), text=level_text, fill='white', font=profile_font)
+    # badges_text = "\n".join([f'{i.get("name")}:{i.get("value")}' for i in data.get("legends").get("selected").get("gameInfo").get("badges")])
+    # draw.text(xy=(result.size[0]-draw.textsize(badges_text, profile_font)[0]-30, result.size[1]-draw.textsize(badges_text, profile_font)[1]-15), text="追踪器:\n" + ("无" if not badges_text else badges_text), fill='white', font=profile_font)
     b = io.BytesIO()
     result.save(b, 'png')
     with open("test.png", "wb") as f:
